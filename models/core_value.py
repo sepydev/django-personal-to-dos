@@ -1,6 +1,7 @@
-from core.models.abstract_model import AbstractManager, AbstractModel
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.db import models
+
+from core.models import AbstractManager, AbstractModel
 
 UserModel = get_user_model()
 
@@ -23,7 +24,8 @@ class CoreValue(AbstractModel):
         UserModel,
         on_delete=models.CASCADE,
         verbose_name='User',
-        blank=True
+        blank=True,
+        null=True
     )
 
     objects = CoreValueManager()
