@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from ..models import CoreValue as CoreValueModel
+from personal_to_dos.core_values.models import CoreValue as CoreValueModel
 
 UserModel = get_user_model()
 
