@@ -24,8 +24,6 @@ class CoreValue(AbstractModel):
         UserModel,
         on_delete=models.CASCADE,
         verbose_name='User',
-        blank=True,
-        null=True
     )
 
     objects = CoreValueManager()

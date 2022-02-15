@@ -1,6 +1,7 @@
-from rest_framework.viewsets import ModelViewSet
-from ..models import CoreValue as CoreValueModel
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import ModelViewSet
+
+from ..models import CoreValue as CoreValueModel
 from ..serializers import CoreValueSummarySerializer, CoreValueDetailSerializer
 
 
@@ -13,3 +14,5 @@ class CoreValueViewSet(ModelViewSet):
         if self.action == 'retrieve':
             return CoreValueDetailSerializer
         return CoreValueSummarySerializer
+
+
