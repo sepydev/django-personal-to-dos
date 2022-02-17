@@ -1,9 +1,4 @@
-from django.contrib.auth import get_user_model
-from django.db import models
-
-from core.models import AbstractManager, AbstractModel
-
-UserModel = get_user_model()
+from core.models import AbstractManager, AbstractModel, TitleDescriptionModelMixin, OwnerModelMixin
 
 
 class CoreValueManager(AbstractManager):
@@ -11,21 +6,7 @@ class CoreValueManager(AbstractManager):
         return super(CoreValueManager, self).get_queryset()
 
 
-class CoreValue(AbstractModel):
-    title = models.CharField(
-        max_length=200,
-        verbose_name='Title'
-    )
-    description = models.TextField(
-        blank=True,
-        verbose_name='Description'
-    )
-    owner = models.ForeignKey(
-        UserModel,
-        on_delete=models.CASCADE,
-        verbose_name='User',
-    )
-
+class CoreValue(TitleDescriptionModelMixin, OwnerModelMixin, AbstractModel):
     objects = CoreValueManager()
 
     class Meta:
