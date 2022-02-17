@@ -13,4 +13,4 @@ class CoreValue(TitleDescriptionModelMixin, OwnerModelMixin, AbstractModel):
         verbose_name = 'Core value'
         verbose_name_plural = 'Core values'
         indexes = [] + TitleDescriptionModelMixin.Meta.indexes + OwnerModelMixin.Meta.indexes + \
-            AbstractModel.Meta.indexes
+                  AbstractModel.Meta.indexes
