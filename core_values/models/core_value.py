@@ -20,7 +20,7 @@ class CoreValue(AbstractModel):
         blank=True,
         verbose_name='Description'
     )
-    user = models.ForeignKey(
+    owner = models.ForeignKey(
         UserModel,
         on_delete=models.CASCADE,
         verbose_name='User',

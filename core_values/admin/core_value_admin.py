@@ -4,13 +4,13 @@ from core.admin import AbstractAdmin
 class CoreValueAdmin(AbstractAdmin):
     list_display = [
                        'title',
-                       'user'
+                       'owner'
                    ] + AbstractAdmin.list_display
     fields = [
                  'title',
                  'description',
-                 'user'
+                 'owner'
              ] + AbstractAdmin.fields
     raw_id_fields = [
-                        'user',
+                        'owner',
                     ] + AbstractAdmin.raw_id_fields

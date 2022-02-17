@@ -8,10 +8,10 @@ class CoreValueSummarySerializer(AbstractSummarySerializer):
         fields = [
                      'title',
                      'description',
-                     'user'
+                     'owner'
 
                  ] + AbstractSummarySerializer.Meta.fields
-        read_only_fields = [] + AbstractSummarySerializer.Meta.read_only_fields
+        read_only_fields = ['owner'] + AbstractSummarySerializer.Meta.read_only_fields
 
 
 class CoreValueDetailSerializer(CoreValueSummarySerializer, AbstractDetailSerializer):
