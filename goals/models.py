@@ -1,10 +1,12 @@
-from core.models import AbstractModel, OwnerModelMixin, TitleDescriptionModelMixin, AbstractManager
 from django.db import models
+
+from core.models import AbstractModel, OwnerModelMixin, TitleDescriptionModelMixin, AbstractManager
 from ..models import CoreValue
 
 
 class GoalManager(AbstractManager):
-    pass
+    def get_queryset(self):
+        return super(GoalManager, self).get_queryset()
 
 
 class GroupChoices(models.TextChoices):
@@ -33,4 +35,4 @@ class Goal(TitleDescriptionModelMixin, OwnerModelMixin, AbstractModel):
         choices=GroupChoices.choices
     )
 
-    objects = GoalManager
+    objects = GoalManager()
