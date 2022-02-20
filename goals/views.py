@@ -4,7 +4,11 @@ from .serializers import GoalDetailSerializer, GoalSummarySerializer
 from ..models import Goal as GoalModel
 
 
-class GoalViewSet(OwnerListModelViewSetMixin, SetOwnerModelViewListMixin, ModelViewSet):
+class GoalViewSet(
+    OwnerListModelViewSetMixin,
+    SetOwnerModelViewListMixin,
+    ModelViewSet
+):
     queryset = GoalModel.objects.all()
     permission_classes = (IsOwnerPermission,)
 

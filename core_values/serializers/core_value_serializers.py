@@ -6,21 +6,29 @@ class CoreValueSummarySerializer(AbstractSummarySerializer):
     class Meta:
         model = CoreValueModel
         fields = [
-                     'title',
-                     'description',
-                     'owner'
+            'title',
+            'description',
+            'owner',
+            *AbstractSummarySerializer.Meta.fields,
+        ]
+        read_only_fields = [
+            'owner',
+            *AbstractSummarySerializer.Meta.read_only_fields
+        ]
 
-                 ] + AbstractSummarySerializer.Meta.fields
-        read_only_fields = ['owner'] + AbstractSummarySerializer.Meta.read_only_fields
 
-
-class CoreValueDetailSerializer(CoreValueSummarySerializer, AbstractDetailSerializer):
+class CoreValueDetailSerializer(
+    CoreValueSummarySerializer,
+    AbstractDetailSerializer
+):
     class Meta:
         model = CoreValueModel
-        fields = [] + \
-            CoreValueSummarySerializer.Meta.fields + \
-            AbstractDetailSerializer.Meta.fields
+        fields = [
+            *CoreValueSummarySerializer.Meta.fields,
+            *AbstractDetailSerializer.Meta.fields,
+        ]
 
-        read_only_fields = [] + \
-            CoreValueSummarySerializer.Meta.read_only_fields + \
-            AbstractDetailSerializer.Meta.read_only_fields
+        read_only_fields = [
+            *CoreValueSummarySerializer.Meta.read_only_fields,
+            *AbstractDetailSerializer.Meta.read_only_fields,
+        ]

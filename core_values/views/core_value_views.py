@@ -4,7 +4,11 @@ from ..models import CoreValue as CoreValueModel
 from ..serializers import CoreValueSummarySerializer, CoreValueDetailSerializer
 
 
-class CoreValueViewSet(OwnerListModelViewSetMixin, SetOwnerModelViewListMixin, ModelViewSet):
+class CoreValueViewSet(
+    OwnerListModelViewSetMixin,
+    SetOwnerModelViewListMixin,
+    ModelViewSet
+):
     queryset = CoreValueModel.objects.all()
     permission_classes = (IsOwnerPermission,)
     serializer_class = CoreValueSummarySerializer
