@@ -14,6 +14,7 @@ class GoalSummarySerializer(AbstractSummarySerializer):
             *AbstractSummarySerializer.Meta.fields,
         ]
         read_only_fields = [
+            'owner',
             *AbstractSummarySerializer.Meta.read_only_fields
         ]
 
