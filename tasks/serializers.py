@@ -9,11 +9,11 @@ class TaskSummarySerializer(AbstractSummarySerializer):
             'title',
             'description',
             'owner',
-            *AbstractSummarySerializer.fields
+            *AbstractSummarySerializer.Meta.fields
         ]
         read_only_fields = [
             'owner',
-            *AbstractSummarySerializer.fields
+            *AbstractSummarySerializer.Meta.read_only_fields
         ]
 
 
@@ -21,7 +21,7 @@ class TaskDetailSerializer(TaskSummarySerializer, AbstractDetailSerializer):
     class Meta:
         model = TaskModel
         fields = [
-            *TaskSummarySerializer.fields,
+            *TaskSummarySerializer.Meta.fields,
             'goal',
             'start_date_time',
             'repeat_type',
@@ -31,9 +31,9 @@ class TaskDetailSerializer(TaskSummarySerializer, AbstractDetailSerializer):
             'end_date',
             'end_after_occurrence',
             'completely_done',
-            *AbstractDetailSerializer.fields,
+            *AbstractDetailSerializer.Meta.fields,
         ]
         read_only_fields = [
-            *TaskSummarySerializer.fields,
-            *AbstractDetailSerializer.fields,
+            *TaskSummarySerializer.Meta.read_only_fields,
+            *AbstractDetailSerializer.Meta.read_only_fields,
         ]

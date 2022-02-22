@@ -1,11 +1,13 @@
-from .core_values.views import CoreValueViewSet  # noqa
-from .goals.views import GoalViewSet  # noqa
+import os
 
 from django.conf import settings
-import os
 from django.http.response import FileResponse
-from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+
+from .core_values.views import CoreValueViewSet  # noqa
+from .goals.views import GoalViewSet  # noqa
+from .tasks.views import TaskViewSet  # noqa
 
 
 class MedialView(APIView):
