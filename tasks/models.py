@@ -7,7 +7,7 @@ from ..goals.models import Goal as GoalModel
 
 
 class RepeatTypeChoices(models.IntegerChoices):
-    NO_REPEAT = (0, "No Repeat")
+    NO_REPEAT = (0, "No repeat")
     DAY = (1, "Day")
     WEEK = (2, "Week")
     MONTH = (3, "Month")
