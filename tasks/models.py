@@ -52,7 +52,9 @@ class Task(
 
     selected_week_days = models.JSONField(
         verbose_name="Selected week days",
-        default=[]
+        default=[],
+        blank=True,
+        null=True,
 
     )
     end_type = models.PositiveSmallIntegerField(
