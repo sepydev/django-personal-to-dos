@@ -20,6 +20,16 @@ class EndTypeChoices(models.IntegerChoices):
     OCCURRENCES = (2, "After specific occurrence")
 
 
+class WeekDaysChoices(models.TextChoices):
+    SUNDAY = ("Su", "Sunday")
+    MONDAY = ("Mo", "Monday")
+    TUESDAY = ("Tu", "Tuesday")
+    WEDNESDAY = ("We", "Wednesday")
+    THURSDAY = ("Th", "Thursday")
+    FRIDAY = ("Fr", "Friday")
+    SATURDAY = ("Sa", "Saturday")
+
+
 class TaskManager(AbstractManager):
     def get_queryset(self):
         return super(TaskManager, self).get_queryset()
@@ -127,7 +137,6 @@ class Task(
     def clean_selected_week_days(self):
         """Make sure repeat_week_day field is like this ['Su','Mo','Tu','We','Th','Fr','Sa']"""
         if self.repeat_type == RepeatTypeChoices.WEEK:
-            valid_data = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
             self.selected_week_days = list(set(self.selected_week_days))
             if not isinstance(self.selected_week_days, list):
                 raise ValidationError(
@@ -139,7 +148,7 @@ class Task(
                     code='invalid'
                 )
             for item in self.selected_week_days:
-                if not isinstance(item, list):
+                if not isinstance(item, str):
                     raise ValidationError(
                         {
                             'selected_week_days': _('Items of this field have to be string')
@@ -154,7 +163,7 @@ class Task(
                               )
                     }, code='mandatory'
                 )
-            if set(self.selected_week_days) - set(valid_data):
+            if set(self.selected_week_days) - set(WeekDaysChoices.values):
                 raise ValidationError(
                     {
                         'selected_week_days': ValidationError(
