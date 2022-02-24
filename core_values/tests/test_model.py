@@ -1,15 +1,7 @@
 from django.test import TestCase
-from django.contrib.auth import get_user_model
+
 from personal_to_dos.core_values.models import CoreValue as CoreValueModel
-
-UserModel = get_user_model()
-
-
-def create_user_helper(
-        email='test@test.com',
-        password='p@123456'
-):
-    return UserModel.objects.create_user(email, password)
+from users.tests.test_api import create_user_helper
 
 
 class CoreValueModelTest(TestCase):
@@ -17,7 +9,7 @@ class CoreValueModelTest(TestCase):
     def test_safe_delete(self):
         core_value = CoreValueModel.objects.create(
             title='Test Title',
-            user=create_user_helper()
+            owner=create_user_helper()
         )
         core_value.save()
         count_not_deleted_core_values = CoreValueModel.objects.all().count()
@@ -31,7 +23,7 @@ class CoreValueModelTest(TestCase):
     def test_restore(self):
         core_value = CoreValueModel.objects.create(
             title='Test Title',
-            user=create_user_helper()
+            owner=create_user_helper()
         )
         core_value.save()
         core_value.delete()
