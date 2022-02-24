@@ -1,6 +1,6 @@
 from core.seralizers import AbstractDetailSerializer, AbstractSummarySerializer
-from core.seralizers import ChoiceField
-from .models import Task as TaskModel, RepeatTypeChoices, EndTypeChoices
+from core.seralizers import ChoiceField, MultipleChoiceField
+from .models import Task as TaskModel, RepeatTypeChoices, EndTypeChoices, WeekDaysChoices
 
 
 class TaskSummarySerializer(AbstractSummarySerializer):
@@ -21,6 +21,7 @@ class TaskSummarySerializer(AbstractSummarySerializer):
 class TaskDetailSerializer(TaskSummarySerializer, AbstractDetailSerializer):
     repeat_type = ChoiceField(choices=RepeatTypeChoices.choices, )
     end_type = ChoiceField(choices=EndTypeChoices.choices)
+    selected_week_days = MultipleChoiceField(choices=WeekDaysChoices.choices, )
 
     class Meta:
         model = TaskModel
