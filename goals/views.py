@@ -1,9 +1,11 @@
 from core.views import ModelViewSet, OwnerListModelViewSetMixin, SetOwnerModelViewListMixin
+from helpers.swagger import ViewSetTagDecorator
 from users.permisions import IsOwnerPermission
 from .serializers import GoalDetailSerializer, GoalSummarySerializer
 from ..models import Goal as GoalModel
 
 
+@ViewSetTagDecorator(tags=("Goal",))
 class GoalViewSet(
     OwnerListModelViewSetMixin,
     SetOwnerModelViewListMixin,

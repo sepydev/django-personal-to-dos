@@ -1,9 +1,11 @@
 from core.views import ModelViewSet, SetOwnerModelViewListMixin, OwnerListModelViewSetMixin
+from helpers.swagger import ViewSetTagDecorator
 from users.permisions import IsOwnerPermission
-from .serializers import TaskSummarySerializer, TaskDetailSerializer
 from .models import Task as TaskModel
+from .serializers import TaskSummarySerializer, TaskDetailSerializer
 
 
+@ViewSetTagDecorator(tags=("Task",))
 class TaskViewSet(SetOwnerModelViewListMixin,
                   OwnerListModelViewSetMixin,
                   ModelViewSet):

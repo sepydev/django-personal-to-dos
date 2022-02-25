@@ -3,13 +3,15 @@ import os
 from django.conf import settings
 from django.http.response import FileResponse
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
 
+from core.views import APIView
+from helpers.swagger import APIViewTagDecorator
 from .core_values.views import CoreValueViewSet  # noqa
 from .goals.views import GoalViewSet  # noqa
 from .tasks.views import TaskViewSet  # noqa
 
 
+@APIViewTagDecorator(methods=('get',), tags=("Media",))
 class MedialView(APIView):
     permission_classes = (IsAuthenticated,)
 

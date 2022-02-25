@@ -1,9 +1,11 @@
 from core.views import ModelViewSet, OwnerListModelViewSetMixin, SetOwnerModelViewListMixin
+from helpers.swagger import ViewSetTagDecorator
 from users.permisions import IsOwnerPermission
 from ..models import CoreValue as CoreValueModel
 from ..serializers import CoreValueSummarySerializer, CoreValueDetailSerializer
 
 
+@ViewSetTagDecorator(tags=("Core Value",))
 class CoreValueViewSet(
     OwnerListModelViewSetMixin,
     SetOwnerModelViewListMixin,
