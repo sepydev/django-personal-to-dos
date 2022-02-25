@@ -11,6 +11,7 @@ class GoalSummarySerializer(AbstractSummarySerializer):
             'description',
             'group',
             'due_date',
+            'core_values',
             *AbstractSummarySerializer.Meta.fields,
         ]
         read_only_fields = [
@@ -25,7 +26,6 @@ class GoalDetailSerializer(GoalSummarySerializer, AbstractDetailSerializer):
     class Meta:
         model = GoalModel
         fields = [
-            'core_values',
             *GoalSummarySerializer.Meta.fields,
             *AbstractDetailSerializer.Meta.fields,
         ]
