@@ -33,7 +33,7 @@ class DailyTasksTodoAPI(APITestCase):
 
         create_task(self.client, self.token, self.goal_id,
                     title="Daily-unlimited",
-                    start_date_time=datetime.date.today().__add__(-20),
+                    start_date_time=datetime.date.today() - datetime.timedelta(days=20),
                     repeat_type="Day",
                     repeat_period=1,
                     end_type="Never",

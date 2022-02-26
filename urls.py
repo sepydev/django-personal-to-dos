@@ -1,12 +1,13 @@
 from django.urls import path, include
 from rest_framework import routers
 
-from .views import CoreValueViewSet, GoalViewSet, MedialView, TaskViewSet
+from .views import CoreValueViewSet, GoalViewSet, MedialView, TaskViewSet,TodoAPIView
 
 router = routers.DefaultRouter()
 router.register('core-value', CoreValueViewSet)
 router.register('goal', GoalViewSet)
 router.register('task', TaskViewSet)
+router.register('to-do', TodoAPIView)
 
 urlpatterns = [
     path('', include(router.urls)),
