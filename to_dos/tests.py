@@ -51,3 +51,81 @@ class DailyTasksTodoAPI(APITestCase):
         )
 
         self.assertContains(response, "Daily-unlimited", status_code=status.HTTP_200_OK)
+
+    def test_daily_expired_task(self):
+        """
+        Testing get to-do api for a task with this condition
+        *daily
+        *expired
+        *repeat every day
+        *not completed
+
+        This task does not have to be in the result
+        """
+
+        create_task(self.client, self.token, self.goal_id,
+                    title="Daily-expired-today",
+                    start_date_time=datetime.date.today() - datetime.timedelta(days=20),
+                    repeat_type="Day",
+                    repeat_period=1,
+                    end_type="On Specific date",
+                    end_date=datetime.date.today() - datetime.timedelta(days=1),
+                    completely_done=False
+                    )
+
+        create_task(self.client, self.token, self.goal_id,
+                    title="Daily-expired-last-week",
+                    start_date_time=datetime.date.today() - datetime.timedelta(days=20),
+                    repeat_type="Day",
+                    repeat_period=1,
+                    end_type="On Specific date",
+                    end_date=datetime.date.today() - datetime.timedelta(days=7),
+                    completely_done=False
+                    )
+
+        response = self.client.get(
+            '/personal-to-dos/to-do/',
+            {
+                'date': datetime.date.today()
+            },
+            headers={
+                'Authorization': self.token
+            }
+        )
+
+        self.assertNotContains(response, "Daily-expired", status_code=status.HTTP_200_OK)
+
+        response = self.client.get(
+            '/personal-to-dos/to-do/',
+            {
+                'date': datetime.date.today() - datetime.timedelta(days=3)
+            },
+            headers={
+                'Authorization': self.token
+            }
+        )
+
+        self.assertContains(response, "Daily-expired-today", status_code=status.HTTP_200_OK)
+        self.assertNotContains(response, "Daily-expired-last-week", status_code=status.HTTP_200_OK)
+
+    def test_daily_task_repeat_period(self):
+        create_task(self.client, self.token, self.goal_id,
+                    title="Daily-not-contains-repeat_period=2",
+                    start_date_time=datetime.date.today() - datetime.timedelta(days=1),
+                    repeat_type="Day",
+                    repeat_period=2,
+                    end_type="Never",
+                    completely_done=False
+                    )
+
+        response = self.client.get(
+            '/personal-to-dos/to-do/',
+            {
+                'date': datetime.date.today()
+            },
+            headers={
+                'Authorization': self.token
+            }
+        )
+
+        self.assertNotContains(response, "Daily-not-contains-repeat_period=2", status_code=status.HTTP_200_OK)
