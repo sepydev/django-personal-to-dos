@@ -4,7 +4,7 @@ import json
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from helpers.date_time import add_months, add_years
+from helpers.date_time import add_months, add_years, add_days
 from personal_to_dos.core_values.tests.test_api import create_core_value
 from personal_to_dos.goals.tests import create_goal
 from personal_to_dos.tasks.tests import create_task
@@ -38,21 +38,21 @@ class TestExpireAndDoneTasks(TodoAPIMixin, APITestCase):
 
         create_task(self.client, self.token, self.goal_id,
                     title="Daily-expired-today",
-                    start_date_time=datetime.date.today() - datetime.timedelta(days=20),
+                    start_date_time=add_days(datetime.date.today(), -20),
                     repeat_type="Day",
                     repeat_period=1,
                     end_type="On Specific date",
-                    end_date=datetime.date.today() - datetime.timedelta(days=1),
+                    end_date=add_days(datetime.date.today(), -1),
                     completely_done=False
                     )
 
         create_task(self.client, self.token, self.goal_id,
                     title="Daily-expired-last-week",
-                    start_date_time=datetime.date.today() - datetime.timedelta(days=20),
+                    start_date_time=add_days(datetime.date.today(), -20),
                     repeat_type="Day",
                     repeat_period=1,
                     end_type="On Specific date",
-                    end_date=datetime.date.today() - datetime.timedelta(days=7),
+                    end_date=add_days(datetime.date.today(), -7),
                     completely_done=False
                     )
 
@@ -71,7 +71,7 @@ class TestExpireAndDoneTasks(TodoAPIMixin, APITestCase):
         response = self.client.get(
             '/personal-to-dos/to-do/',
             {
-                'date': datetime.date.today() - datetime.timedelta(days=3)
+                'date': add_days(datetime.date.today(), -3)
             },
             headers={
                 'Authorization': self.token
@@ -84,7 +84,7 @@ class TestExpireAndDoneTasks(TodoAPIMixin, APITestCase):
     def test_done_task(self):
         create_task(self.client, self.token, self.goal_id,
                     title="task completely done",
-                    start_date_time=datetime.date.today() - datetime.timedelta(days=20),
+                    start_date_time=add_days(datetime.date.today(), 20),
                     repeat_type="Day",
                     repeat_period=1,
                     end_type="On Specific date",
@@ -120,7 +120,7 @@ class TestDailyTasks(TodoAPIMixin, APITestCase):
 
         create_task(self.client, self.token, self.goal_id,
                     title="Daily-unlimited",
-                    start_date_time=datetime.date.today() - datetime.timedelta(days=20),
+                    start_date_time=add_days(datetime.date.today(), -20),
                     repeat_type="Day",
                     repeat_period=1,
                     end_type="Never",
@@ -142,7 +142,7 @@ class TestDailyTasks(TodoAPIMixin, APITestCase):
     def test_daily_task_repeat_period(self):
         create_task(self.client, self.token, self.goal_id,
                     title="Daily-not-contains-repeat_period=2",
-                    start_date_time=datetime.date.today() - datetime.timedelta(days=1),
+                    start_date_time=add_days(datetime.date.today(), -1),
                     repeat_type="Day",
                     repeat_period=2,
                     end_type="Never",
@@ -150,7 +150,7 @@ class TestDailyTasks(TodoAPIMixin, APITestCase):
                     )
         create_task(self.client, self.token, self.goal_id,
                     title="Daily-not-contains-repeat_period=3",
-                    start_date_time=datetime.date.today() - datetime.timedelta(days=1),
+                    start_date_time=add_days(datetime.date.today(), -1),
                     repeat_type="Day",
                     repeat_period=3,
                     end_type="Never",
