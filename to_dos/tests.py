@@ -281,3 +281,88 @@ class TestYearlyTasks(TodoAPIMixin, APITestCase):
 
         self.assertNotContains(response, "Yearly-not-contains-repeat_period=2", status_code=status.HTTP_200_OK)
         self.assertNotContains(response, "Yearly-not-contains-repeat_period=3", status_code=status.HTTP_200_OK)
+
+
+class TestWeeklyTasks(TodoAPIMixin, APITestCase):
+
+    def test_weekly_unlimited_task(self):
+        create_task(self.client, self.token, self.goal_id,
+                    title="Weekly-unlimited",
+                    start_date_time=add_days(datetime.date.today(), -100),
+                    repeat_type="Week",
+                    selected_week_days=[datetime.date.today().strftime("%A"), ],
+                    repeat_period=1,
+                    end_type="Never",
+                    completely_done=False
+                    )
+
+        response = self.client.get(
+            '/personal-to-dos/to-do/',
+            {
+                'date': datetime.date.today()
+            },
+            headers={
+                'Authorization': self.token
+            }
+        )
+
+        self.assertContains(response, "Weekly-unlimited", status_code=status.HTTP_200_OK)
+
+    def test_weekly_wrong_day_task(self):
+        selected_week_day = add_days(datetime.date.today(), -1).strftime("%A")
+        create_task(self.client, self.token, self.goal_id,
+                    title="Weekly-unlimited",
+                    start_date_time=add_days(datetime.date.today(), -100),
+                    repeat_type="Week",
+                    selected_week_days=[selected_week_day, ],
+                    repeat_period=1,
+                    end_type="Never",
+                    completely_done=False
+                    )
+
+        response = self.client.get(
+            '/personal-to-dos/to-do/',
+            {
+                'date': datetime.date.today()
+            },
+            headers={
+                'Authorization': self.token
+            }
+        )
+
+        self.assertNotContains(response, "Weekly-unlimited", status_code=status.HTTP_200_OK)
+
+    def test_weekly_task_repeat_period(self):
+        last_week = datetime.date.today().weekday() - 1 + 7
+        create_task(self.client, self.token, self.goal_id,
+                    title="Weekly-not-contains-repeat_period=2",
+                    start_date_time=add_days(datetime.date.today(), -last_week),
+                    repeat_type="Week",
+                    selected_week_days=[datetime.date.today().strftime("%A"), ],
+                    repeat_period=2,
+                    end_type="Never",
+                    completely_done=False
+                    )
+        last_week += 7
+        create_task(self.client, self.token, self.goal_id,
+                    title="Weekly-not-contains-repeat_period=3",
+                    start_date_time=add_days(datetime.date.today(), -last_week),
+                    repeat_type="Week",
+                    selected_week_days=[datetime.date.today().strftime("%A"), ],
+                    repeat_period=3,
+                    end_type="Never",
+                    completely_done=False
+                    )
+
+        response = self.client.get(
+            '/personal-to-dos/to-do/',
+            {
+                'date': datetime.date.today()
+            },
+            headers={
+                'Authorization': self.token
+            }
+        )
+
+        self.assertNotContains(response, "Weekly-not-contains-repeat_period=2", status_code=status.HTTP_200_OK)
+        self.assertNotContains(response, "Weekly-not-contains-repeat_period=3", status_code=status.HTTP_200_OK)
