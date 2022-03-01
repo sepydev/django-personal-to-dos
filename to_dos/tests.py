@@ -11,7 +11,8 @@ from personal_to_dos.tasks.tests import create_task
 from users.tests.test_api import create_user_verify_and_login
 
 
-class TodoAPI(APITestCase):
+class TodoAPIMixin:
+
     def setUp(self) -> None:
         token = create_user_verify_and_login(self.client)
         core_value_response = create_core_value(self.client, token)
@@ -20,6 +21,9 @@ class TodoAPI(APITestCase):
         goal_id = json.loads(goal_response.content)['pk']
         self.token = token
         self.goal_id = goal_id
+
+
+class TodoAPI(TodoAPIMixin, APITestCase):
 
     def test_expired_task(self):
         """
@@ -101,15 +105,7 @@ class TodoAPI(APITestCase):
         self.assertNotContains(response, "task completely done", status_code=status.HTTP_200_OK)
 
 
-class DailyTasksTodoAPI(APITestCase):
-    def setUp(self) -> None:
-        token = create_user_verify_and_login(self.client)
-        core_value_response = create_core_value(self.client, token)
-        core_value_id = json.loads(core_value_response.content)['pk']
-        goal_response = create_goal(self.client, token, core_value_id)
-        goal_id = json.loads(goal_response.content)['pk']
-        self.token = token
-        self.goal_id = goal_id
+class DailyTasksTodoAPI(TodoAPIMixin, APITestCase):
 
     def test_daily_unlimited_task(self):
         """
@@ -175,15 +171,7 @@ class DailyTasksTodoAPI(APITestCase):
         self.assertNotContains(response, "Daily-not-contains-repeat_period=3", status_code=status.HTTP_200_OK)
 
 
-class MonthlyTasksTodoAPI(APITestCase):
-    def setUp(self) -> None:
-        token = create_user_verify_and_login(self.client)
-        core_value_response = create_core_value(self.client, token)
-        core_value_id = json.loads(core_value_response.content)['pk']
-        goal_response = create_goal(self.client, token, core_value_id)
-        goal_id = json.loads(goal_response.content)['pk']
-        self.token = token
-        self.goal_id = goal_id
+class MonthlyTasksTodoAPI(TodoAPIMixin, APITestCase):
 
     def test_monthly_unlimited_task(self):
         create_task(self.client, self.token, self.goal_id,
