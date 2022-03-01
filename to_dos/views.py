@@ -22,8 +22,10 @@ class TodoAPIView(ListModelMixin, GenericViewSet):
             diff_date=(ExpressionWrapper(_date - F('start_date_time'),
                                          output_field=IntegerField()) / 86400000000),
             diff_month=(_date.month - F('start_date_time__month')),
+            diff_year=(_date.year - F('start_date_time__year')),
             daily_repeat_period_condition=(F('diff_date') % Cast('repeat_period', IntegerField())),
             monthly_repeat_period_condition=(F('diff_month') % Cast('repeat_period', IntegerField())),
+            yearly_repeat_period_condition=(F('diff_year') % Cast('repeat_period', IntegerField())),
 
         )
         _expire_conditions = (
@@ -41,12 +43,20 @@ class TodoAPIView(ListModelMixin, GenericViewSet):
             start_date_time__day=_date.day,
             monthly_repeat_period_condition=0,
         )
+        _yearly_conditions = Q(
+            repeat_type=RepeatTypeChoices.YEAR,
+            start_date_time__day=_date.day,
+            start_date_time__month=_date.month,
+            yearly_repeat_period_condition=0,
+        )
+
         _queryset = _queryset.filter(
             _expire_conditions &
             _not_done_condition &
             (
                     _daily_conditions |
-                    _monthly_conditions
+                    _monthly_conditions |
+                    _yearly_conditions
             )
         )
         return _queryset

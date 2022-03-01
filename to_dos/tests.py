@@ -4,7 +4,7 @@ import json
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from helpers.date_time import add_months
+from helpers.date_time import add_months, add_years
 from personal_to_dos.core_values.tests.test_api import create_core_value
 from personal_to_dos.goals.tests import create_goal
 from personal_to_dos.tasks.tests import create_task
@@ -23,7 +23,7 @@ class TodoAPIMixin:
         self.goal_id = goal_id
 
 
-class TodoAPI(TodoAPIMixin, APITestCase):
+class TestExpireAndDoneTasks(TodoAPIMixin, APITestCase):
 
     def test_expired_task(self):
         """
@@ -105,7 +105,7 @@ class TodoAPI(TodoAPIMixin, APITestCase):
         self.assertNotContains(response, "task completely done", status_code=status.HTTP_200_OK)
 
 
-class DailyTasksTodoAPI(TodoAPIMixin, APITestCase):
+class TestDailyTasks(TodoAPIMixin, APITestCase):
 
     def test_daily_unlimited_task(self):
         """
@@ -171,7 +171,7 @@ class DailyTasksTodoAPI(TodoAPIMixin, APITestCase):
         self.assertNotContains(response, "Daily-not-contains-repeat_period=3", status_code=status.HTTP_200_OK)
 
 
-class MonthlyTasksTodoAPI(TodoAPIMixin, APITestCase):
+class TestMonthlyTasks(TodoAPIMixin, APITestCase):
 
     def test_monthly_unlimited_task(self):
         create_task(self.client, self.token, self.goal_id,
@@ -225,3 +225,59 @@ class MonthlyTasksTodoAPI(TodoAPIMixin, APITestCase):
 
         self.assertNotContains(response, "Monthly-not-contains-repeat_period=2", status_code=status.HTTP_200_OK)
         self.assertNotContains(response, "Monthly-not-contains-repeat_period=3", status_code=status.HTTP_200_OK)
+
+
+class TestYearlyTasks(TodoAPIMixin, APITestCase):
+
+    def test_yearly_unlimited_task(self):
+        create_task(self.client, self.token, self.goal_id,
+                    title="Yearly-unlimited",
+                    start_date_time=add_years(datetime.date.today(), -1),
+                    repeat_type="Year",
+                    repeat_period=1,
+                    end_type="Never",
+                    completely_done=False
+                    )
+
+        response = self.client.get(
+            '/personal-to-dos/to-do/',
+            {
+                'date': datetime.date.today()
+            },
+            headers={
+                'Authorization': self.token
+            }
+        )
+
+        self.assertContains(response, "Yearly-unlimited", status_code=status.HTTP_200_OK)
+
+    def test_monthly_task_repeat_period(self):
+        create_task(self.client, self.token, self.goal_id,
+                    title="Yearly-not-contains-repeat_period=2",
+                    start_date_time=add_years(datetime.date.today(), -1),
+                    repeat_type="Year",
+                    repeat_period=2,
+                    end_type="Never",
+                    completely_done=False
+                    )
+        create_task(self.client, self.token, self.goal_id,
+                    title="Yearly-not-contains-repeat_period=3",
+                    start_date_time=add_years(datetime.date.today(), -1),
+                    repeat_type="Year",
+                    repeat_period=3,
+                    end_type="Never",
+                    completely_done=False
+                    )
+
+        response = self.client.get(
+            '/personal-to-dos/to-do/',
+            {
+                'date': datetime.date.today()
+            },
+            headers={
+                'Authorization': self.token
+            }
+        )
+
+        self.assertNotContains(response, "Yearly-not-contains-repeat_period=2", status_code=status.HTTP_200_OK)
+        self.assertNotContains(response, "Yearly-not-contains-repeat_period=3", status_code=status.HTTP_200_OK)
