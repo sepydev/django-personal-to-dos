@@ -57,7 +57,7 @@ class TestExpireAndDoneTasks(TodoAPIMixin, APITestCase):
                     )
 
         response = self.client.get(
-            '/personal-to-dos/to-do/',
+            '/personal-to-dos/to-do-list/',
             {
                 'date': datetime.date.today()
             },
@@ -69,7 +69,7 @@ class TestExpireAndDoneTasks(TodoAPIMixin, APITestCase):
         self.assertNotContains(response, "Daily-expired", status_code=status.HTTP_200_OK)
 
         response = self.client.get(
-            '/personal-to-dos/to-do/',
+            '/personal-to-dos/to-do-list/',
             {
                 'date': add_days(datetime.date.today(), -3)
             },
@@ -93,7 +93,7 @@ class TestExpireAndDoneTasks(TodoAPIMixin, APITestCase):
                     )
 
         response = self.client.get(
-            '/personal-to-dos/to-do/',
+            '/personal-to-dos/to-do-list/',
             {
                 'date': datetime.date.today()
             },
@@ -128,7 +128,7 @@ class TestDailyTasks(TodoAPIMixin, APITestCase):
                     )
 
         response = self.client.get(
-            '/personal-to-dos/to-do/',
+            '/personal-to-dos/to-do-list/',
             {
                 'date': datetime.date.today()
             },
@@ -158,7 +158,7 @@ class TestDailyTasks(TodoAPIMixin, APITestCase):
                     )
 
         response = self.client.get(
-            '/personal-to-dos/to-do/',
+            '/personal-to-dos/to-do-list/',
             {
                 'date': datetime.date.today()
             },
@@ -184,7 +184,7 @@ class TestMonthlyTasks(TodoAPIMixin, APITestCase):
                     )
 
         response = self.client.get(
-            '/personal-to-dos/to-do/',
+            '/personal-to-dos/to-do-list/',
             {
                 'date': datetime.date.today()
             },
@@ -214,7 +214,7 @@ class TestMonthlyTasks(TodoAPIMixin, APITestCase):
                     )
 
         response = self.client.get(
-            '/personal-to-dos/to-do/',
+            '/personal-to-dos/to-do-list/',
             {
                 'date': datetime.date.today()
             },
@@ -240,7 +240,7 @@ class TestYearlyTasks(TodoAPIMixin, APITestCase):
                     )
 
         response = self.client.get(
-            '/personal-to-dos/to-do/',
+            '/personal-to-dos/to-do-list/',
             {
                 'date': datetime.date.today()
             },
@@ -270,7 +270,7 @@ class TestYearlyTasks(TodoAPIMixin, APITestCase):
                     )
 
         response = self.client.get(
-            '/personal-to-dos/to-do/',
+            '/personal-to-dos/to-do-list/',
             {
                 'date': datetime.date.today()
             },
@@ -297,7 +297,7 @@ class TestWeeklyTasks(TodoAPIMixin, APITestCase):
                     )
 
         response = self.client.get(
-            '/personal-to-dos/to-do/',
+            '/personal-to-dos/to-do-list/',
             {
                 'date': datetime.date.today()
             },
@@ -321,7 +321,7 @@ class TestWeeklyTasks(TodoAPIMixin, APITestCase):
                     )
 
         response = self.client.get(
-            '/personal-to-dos/to-do/',
+            '/personal-to-dos/to-do-list/',
             {
                 'date': datetime.date.today()
             },
@@ -355,7 +355,7 @@ class TestWeeklyTasks(TodoAPIMixin, APITestCase):
                     )
 
         response = self.client.get(
-            '/personal-to-dos/to-do/',
+            '/personal-to-dos/to-do-list/',
             {
                 'date': datetime.date.today()
             },
