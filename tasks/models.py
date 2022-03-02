@@ -54,7 +54,7 @@ class Task(
         choices=RepeatTypeChoices.choices,
         verbose_name="Repeat Type",
     )
-    repeat_period = models.PositiveSmallIntegerField(
+    repeat_period = models.IntegerField(
         verbose_name="Repeat period",
         blank=True,
         null=True,
