@@ -8,7 +8,7 @@ from core.views import APIView
 from helpers.swagger import APIViewTagDecorator
 from .core_values.views import CoreValueViewSet  # noqa
 from .goals.views import GoalViewSet  # noqa
-from .tasks.views import TaskViewSet  # noqa
+from .tasks.views import TaskViewSet, PartiallyCompletedTaskViewSet  # noqa
 from .to_dos.views import TodoAPIView  # noqa
 
 

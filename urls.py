@@ -1,12 +1,18 @@
 from django.urls import path, include
 from rest_framework import routers
 
-from .views import CoreValueViewSet, GoalViewSet, MedialView, TaskViewSet,TodoAPIView
+from .views import CoreValueViewSet, \
+    GoalViewSet, \
+    MedialView, \
+    TaskViewSet, \
+    PartiallyCompletedTaskViewSet, \
+    TodoAPIView
 
 router = routers.DefaultRouter()
 router.register('core-value', CoreValueViewSet)
 router.register('goal', GoalViewSet)
 router.register('task', TaskViewSet)
+router.register('partially-completed-task', PartiallyCompletedTaskViewSet)
 router.register('to-do-list', TodoAPIView)
 
 

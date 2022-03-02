@@ -1,8 +1,9 @@
 from core.views import ModelViewSet, SetOwnerModelViewListMixin, OwnerListModelViewSetMixin
 from helpers.swagger import ViewSetTagDecorator
 from users.permisions import IsOwnerPermission
-from .models import Task as TaskModel
-from .serializers import TaskSummarySerializer, TaskDetailSerializer
+from .models import Task as TaskModel, PartiallyCompletedTask as PartiallyCompletedTaskModel
+from .serializers import TaskSummarySerializer, TaskDetailSerializer, \
+    PartiallyCompletedTaskSummarySerializer, PartiallyCompletedTaskDetailSerializer
 
 
 @ViewSetTagDecorator(tags=("Task",))
@@ -17,3 +18,17 @@ class TaskViewSet(SetOwnerModelViewListMixin,
             return TaskSummarySerializer
         else:
             return TaskDetailSerializer
+
+
+@ViewSetTagDecorator(tags=("Task",))
+class PartiallyCompletedTaskViewSet(SetOwnerModelViewListMixin,
+                                    OwnerListModelViewSetMixin,
+                                    ModelViewSet):
+    permission_classes = (IsOwnerPermission,)
+    queryset = PartiallyCompletedTaskModel.objects.all()
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return PartiallyCompletedTaskSummarySerializer
+        else:
+            return PartiallyCompletedTaskDetailSerializer

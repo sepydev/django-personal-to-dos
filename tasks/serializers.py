@@ -1,6 +1,8 @@
 from core.seralizers import AbstractDetailSerializer, AbstractSummarySerializer
 from core.seralizers import ChoiceField, MultipleChoiceField
-from .models import Task as TaskModel, RepeatTypeChoices, EndTypeChoices, WeekDaysChoices
+from .models import Task as TaskModel, \
+    PartiallyCompletedTask as PartiallyCompletedTaskModel, \
+    RepeatTypeChoices, EndTypeChoices, WeekDaysChoices
 
 
 class TaskSummarySerializer(AbstractSummarySerializer):
@@ -40,5 +42,32 @@ class TaskDetailSerializer(TaskSummarySerializer, AbstractDetailSerializer):
         ]
         read_only_fields = [
             *TaskSummarySerializer.Meta.read_only_fields,
+            *AbstractDetailSerializer.Meta.read_only_fields,
+        ]
+
+
+class PartiallyCompletedTaskSummarySerializer(AbstractSummarySerializer):
+    class Meta:
+        model = PartiallyCompletedTaskModel
+        fields = [
+            'description',
+            'owner',
+            *AbstractSummarySerializer.Meta.fields
+        ]
+        read_only_fields = [
+            'owner',
+            *AbstractSummarySerializer.Meta.read_only_fields
+        ]
+
+
+class PartiallyCompletedTaskDetailSerializer(PartiallyCompletedTaskSummarySerializer, AbstractDetailSerializer):
+    class Meta:
+        model = PartiallyCompletedTaskModel
+        fields = [
+            *PartiallyCompletedTaskSummarySerializer.Meta.fields,
+            *AbstractDetailSerializer.Meta.fields,
+        ]
+        read_only_fields = [
+            *PartiallyCompletedTaskSummarySerializer.Meta.read_only_fields,
             *AbstractDetailSerializer.Meta.read_only_fields,
         ]
