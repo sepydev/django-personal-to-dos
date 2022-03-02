@@ -176,3 +176,15 @@ class Task(
         self.clean_repeat_type()
         self.clean_end_type()
         self.clean_selected_week_days()
+
+
+class PartiallyCompletedTask(OwnerModelMixin, AbstractModel):
+    description = models.TextField(
+        blank=True,
+        verbose_name='Description'
+    )
+    task = models.ForeignKey('Task', on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Partially completed task'
+        verbose_name_plural = 'Partially completed tasks'
