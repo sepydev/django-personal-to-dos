@@ -1,10 +1,11 @@
 import datetime
+import json
 
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from helpers.date_time import add_months, add_years, add_days
-from personal_to_dos.tasks.tests import create_task, PrepareTaskTestMixin
+from personal_to_dos.tasks.tests import create_task, create_partially_completed_task, PrepareTaskTestMixin
 
 
 class TestExpireAndDoneTasks(PrepareTaskTestMixin, APITestCase):
@@ -25,7 +26,7 @@ class TestExpireAndDoneTasks(PrepareTaskTestMixin, APITestCase):
                     start_date_time=add_days(datetime.date.today(), -20),
                     repeat_type="Day",
                     repeat_period=1,
-                    end_type="On Specific date",
+                    end_type="On specific date",
                     end_date=add_days(datetime.date.today(), -1),
                     completely_done=False
                     )
@@ -35,7 +36,7 @@ class TestExpireAndDoneTasks(PrepareTaskTestMixin, APITestCase):
                     start_date_time=add_days(datetime.date.today(), -20),
                     repeat_type="Day",
                     repeat_period=1,
-                    end_type="On Specific date",
+                    end_type="On specific date",
                     end_date=add_days(datetime.date.today(), -7),
                     completely_done=False
                     )
@@ -71,7 +72,7 @@ class TestExpireAndDoneTasks(PrepareTaskTestMixin, APITestCase):
                     start_date_time=add_days(datetime.date.today(), 20),
                     repeat_type="Day",
                     repeat_period=1,
-                    end_type="On Specific date",
+                    end_type="On specific date",
                     end_date=datetime.date.today() + datetime.timedelta(days=101),
                     completely_done=True
                     )
@@ -87,6 +88,53 @@ class TestExpireAndDoneTasks(PrepareTaskTestMixin, APITestCase):
         )
 
         self.assertNotContains(response, "task completely done", status_code=status.HTTP_200_OK)
+
+    def test_partially_done_task(self):
+        task_response = create_task(self.client, self.token, self.goal_id,
+                                    title="task done",
+                                    start_date_time=add_days(datetime.date.today(), 20),
+                                    repeat_type="Day",
+                                    repeat_period=1,
+                                    end_type="After specific occurrence",
+                                    end_after_occurrence=2,
+                                    end_date=datetime.date.today() + datetime.timedelta(days=101),
+                                    completely_done=False
+                                    )
+        task_id = json.loads(task_response.content)['pk']
+
+        response = self.client.get(
+            '/personal-to-dos/to-do-list/',
+            {
+                'date': datetime.date.today()
+            },
+            headers={
+                'Authorization': self.token
+            }
+        )
+        self.assertContains(response, "task done", status_code=status.HTTP_200_OK)
+
+        create_partially_completed_task(
+            self.client,
+            self.token,
+            task_id
+        )
+        create_partially_completed_task(
+            self.client,
+            self.token,
+            task_id
+        )
+
+        response = self.client.get(
+            '/personal-to-dos/to-do-list/',
+            {
+                'date': datetime.date.today()
+            },
+            headers={
+                'Authorization': self.token
+            }
+        )
+
+        self.assertNotContains(response, "task done", status_code=status.HTTP_200_OK)
 
 
 class TestDailyTasks(PrepareTaskTestMixin, APITestCase):
@@ -350,5 +398,3 @@ class TestWeeklyTasks(PrepareTaskTestMixin, APITestCase):
 
         self.assertNotContains(response, "Weekly-not-contains-repeat_period=2", status_code=status.HTTP_200_OK)
         self.assertNotContains(response, "Weekly-not-contains-repeat_period=3", status_code=status.HTTP_200_OK)
-
-# Todo: Test end after specific occurrence

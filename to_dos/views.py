@@ -1,6 +1,6 @@
 import datetime
 
-from django.db.models import Q, F, IntegerField
+from django.db.models import Q, F, IntegerField, Count
 from django.db.models.functions import Cast, ExtractDay
 from rest_framework.mixins import ListModelMixin
 from rest_framework.viewsets import GenericViewSet
@@ -34,12 +34,16 @@ class TodoAPIView(ListModelMixin, OwnerListModelViewSetMixin, GenericViewSet):
                                                      IntegerField()),
                 yearly_repeat_period_condition=Cast(F('diff_year') % F('repeat_period'), IntegerField()),
                 weekly_repeat_period_condition=Cast(F('diff_week') % F('repeat_period'), IntegerField()),
+                count_occurrence=Count('partially_completed_task')
             )
+
+            # Todo add today done column
+
 
             _expire_conditions = (
                     Q(end_type=EndTypeChoices.NEVER) |
-                    (Q(end_type=EndTypeChoices.DATE, end_date__gte=_date))
-                # Todo filter end After specific occurrence
+                    (Q(end_type=EndTypeChoices.DATE, end_date__gte=_date)) |
+                    (Q(end_type=EndTypeChoices.OCCURRENCES, end_after_occurrence__gt=F('count_occurrence')))
             )
             _not_done_condition = Q(completely_done=False)
 

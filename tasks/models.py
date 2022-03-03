@@ -16,7 +16,7 @@ class RepeatTypeChoices(models.IntegerChoices):
 
 class EndTypeChoices(models.IntegerChoices):
     NEVER = (0, "Never")
-    DATE = (1, "On Specific date")
+    DATE = (1, "On specific date")
     OCCURRENCES = (2, "After specific occurrence")
 
 
@@ -186,5 +186,6 @@ class PartiallyCompletedTask(OwnerModelMixin, AbstractModel):
     task = models.ForeignKey('Task', on_delete=models.CASCADE)
 
     class Meta:
+        default_related_name = "partially_completed_task"
         verbose_name = 'Partially completed task'
         verbose_name_plural = 'Partially completed tasks'
