@@ -1,6 +1,6 @@
 import datetime
 
-from django.db.models import Q, F, IntegerField, Count
+from django.db.models import Q, F, IntegerField, Count, Exists, OuterRef
 from django.db.models.functions import Cast, ExtractDay
 from rest_framework.mixins import ListModelMixin
 from rest_framework.viewsets import GenericViewSet
@@ -9,7 +9,9 @@ from core.views import OwnerListModelViewSetMixin
 from helpers.swagger import APIViewTagDecorator
 from users.permisions import IsOwnerPermission
 from .serializers import ToDoSummarySerializer
-from ..tasks.models import Task as TaskModel, RepeatTypeChoices, EndTypeChoices
+from ..tasks.models import Task as TaskModel, \
+    PartiallyCompletedTask as PartiallyCompletedTaskModel, \
+    RepeatTypeChoices, EndTypeChoices
 
 
 @APIViewTagDecorator(methods=('list',), tags=("To-do-list",))
@@ -34,16 +36,21 @@ class TodoAPIView(ListModelMixin, OwnerListModelViewSetMixin, GenericViewSet):
                                                      IntegerField()),
                 yearly_repeat_period_condition=Cast(F('diff_year') % F('repeat_period'), IntegerField()),
                 weekly_repeat_period_condition=Cast(F('diff_week') % F('repeat_period'), IntegerField()),
-                count_occurrence=Count('partially_completed_task')
+                count_occurrence=Count('partially_completed_task'),
+                done_today=Exists(
+                    PartiallyCompletedTaskModel.objects.filter(task_id=OuterRef('pk'), create_date=_date.date())),
             )
-
-            # Todo add today done column
-
 
             _expire_conditions = (
                     Q(end_type=EndTypeChoices.NEVER) |
-                    (Q(end_type=EndTypeChoices.DATE, end_date__gte=_date)) |
-                    (Q(end_type=EndTypeChoices.OCCURRENCES, end_after_occurrence__gt=F('count_occurrence')))
+                    Q(end_type=EndTypeChoices.DATE, end_date__gte=_date) |
+                    (
+                            Q(end_type=EndTypeChoices.OCCURRENCES) &
+                            (
+                                    Q(end_after_occurrence__gt=F('count_occurrence')) |
+                                    Q(done_today=True)
+                            )
+                    )
             )
             _not_done_condition = Q(completely_done=False)
 

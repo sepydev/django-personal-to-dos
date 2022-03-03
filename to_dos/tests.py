@@ -6,6 +6,7 @@ from rest_framework.test import APITestCase
 
 from helpers.date_time import add_months, add_years, add_days
 from personal_to_dos.tasks.tests import create_task, create_partially_completed_task, PrepareTaskTestMixin
+from ..tasks.models import PartiallyCompletedTask as PartiallyCompletedTaskModel
 
 
 class TestExpireAndDoneTasks(PrepareTaskTestMixin, APITestCase):
@@ -118,6 +119,8 @@ class TestExpireAndDoneTasks(PrepareTaskTestMixin, APITestCase):
             self.token,
             task_id
         )
+        PartiallyCompletedTaskModel.objects.update(create_date=add_days(datetime.date.today(), -1))
+
         create_partially_completed_task(
             self.client,
             self.token,
@@ -128,6 +131,19 @@ class TestExpireAndDoneTasks(PrepareTaskTestMixin, APITestCase):
             '/personal-to-dos/to-do-list/',
             {
                 'date': datetime.date.today()
+            },
+            headers={
+                'Authorization': self.token
+            }
+        )
+
+        self.assertContains(response, "task done", status_code=status.HTTP_200_OK)
+        self.assertTrue(json.loads(response.content)[0]['done_today'])
+
+        response = self.client.get(
+            '/personal-to-dos/to-do-list/',
+            {
+                'date': add_days(datetime.date.today(), 1)
             },
             headers={
                 'Authorization': self.token
