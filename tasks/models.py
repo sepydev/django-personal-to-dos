@@ -189,3 +189,4 @@ class PartiallyCompletedTask(OwnerModelMixin, AbstractModel):
         default_related_name = "partially_completed_task"
         verbose_name = 'Partially completed task'
         verbose_name_plural = 'Partially completed tasks'
+        unique_together = ['task', 'create_date']
