@@ -39,7 +39,7 @@ class TodoAPIView(ListModelMixin, OwnerListModelViewSetMixin, GenericViewSet):
             _expire_conditions = (
                     Q(end_type=EndTypeChoices.NEVER) |
                     (Q(end_type=EndTypeChoices.DATE, end_date__gte=_date))
-                # Todo handel end After specific occurrence
+                # Todo filter end After specific occurrence
             )
             _not_done_condition = Q(completely_done=False)
 

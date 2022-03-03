@@ -1,29 +1,13 @@
 import datetime
-import json
 
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from helpers.date_time import add_months, add_years, add_days
-from personal_to_dos.core_values.tests.test_api import create_core_value
-from personal_to_dos.goals.tests import create_goal
-from personal_to_dos.tasks.tests import create_task
-from users.tests.test_api import create_user_verify_and_login
+from personal_to_dos.tasks.tests import create_task, PrepareTaskTestMixin
 
 
-class TodoAPIMixin:
-
-    def setUp(self) -> None:
-        token = create_user_verify_and_login(self.client)
-        core_value_response = create_core_value(self.client, token)
-        core_value_id = json.loads(core_value_response.content)['pk']
-        goal_response = create_goal(self.client, token, core_value_id)
-        goal_id = json.loads(goal_response.content)['pk']
-        self.token = token
-        self.goal_id = goal_id
-
-
-class TestExpireAndDoneTasks(TodoAPIMixin, APITestCase):
+class TestExpireAndDoneTasks(PrepareTaskTestMixin, APITestCase):
 
     def test_expired_task(self):
         """
@@ -105,7 +89,7 @@ class TestExpireAndDoneTasks(TodoAPIMixin, APITestCase):
         self.assertNotContains(response, "task completely done", status_code=status.HTTP_200_OK)
 
 
-class TestDailyTasks(TodoAPIMixin, APITestCase):
+class TestDailyTasks(PrepareTaskTestMixin, APITestCase):
 
     def test_daily_unlimited_task(self):
         """
@@ -171,7 +155,7 @@ class TestDailyTasks(TodoAPIMixin, APITestCase):
         self.assertNotContains(response, "Daily-not-contains-repeat_period=3", status_code=status.HTTP_200_OK)
 
 
-class TestMonthlyTasks(TodoAPIMixin, APITestCase):
+class TestMonthlyTasks(PrepareTaskTestMixin, APITestCase):
 
     def test_monthly_unlimited_task(self):
         create_task(self.client, self.token, self.goal_id,
@@ -227,7 +211,7 @@ class TestMonthlyTasks(TodoAPIMixin, APITestCase):
         self.assertNotContains(response, "Monthly-not-contains-repeat_period=3", status_code=status.HTTP_200_OK)
 
 
-class TestYearlyTasks(TodoAPIMixin, APITestCase):
+class TestYearlyTasks(PrepareTaskTestMixin, APITestCase):
 
     def test_yearly_unlimited_task(self):
         create_task(self.client, self.token, self.goal_id,
@@ -283,7 +267,7 @@ class TestYearlyTasks(TodoAPIMixin, APITestCase):
         self.assertNotContains(response, "Yearly-not-contains-repeat_period=3", status_code=status.HTTP_200_OK)
 
 
-class TestWeeklyTasks(TodoAPIMixin, APITestCase):
+class TestWeeklyTasks(PrepareTaskTestMixin, APITestCase):
 
     def test_weekly_unlimited_task(self):
         create_task(self.client, self.token, self.goal_id,
@@ -366,3 +350,5 @@ class TestWeeklyTasks(TodoAPIMixin, APITestCase):
 
         self.assertNotContains(response, "Weekly-not-contains-repeat_period=2", status_code=status.HTTP_200_OK)
         self.assertNotContains(response, "Weekly-not-contains-repeat_period=3", status_code=status.HTTP_200_OK)
+
+# Todo: Test end after specific occurrence

@@ -52,6 +52,7 @@ class PartiallyCompletedTaskSummarySerializer(AbstractSummarySerializer):
         fields = [
             'description',
             'owner',
+            'task',
             *AbstractSummarySerializer.Meta.fields
         ]
         read_only_fields = [
