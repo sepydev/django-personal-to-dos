@@ -13,6 +13,7 @@ class GoalViewSet(
 ):
     queryset = GoalModel.objects.all()
     permission_classes = (IsOwnerPermission,)
+    serializer_class = GoalSummarySerializer
 
     def get_queryset(self):
         queryset = super(GoalViewSet, self).get_queryset()
@@ -20,8 +21,4 @@ class GoalViewSet(
             queryset = queryset.prefetch_related('core_values')
         return queryset
 
-    def get_serializer_class(self):
-        if self.action == 'retrieve':
-            return GoalDetailSerializer
-        else:
-            return GoalSummarySerializer
+
