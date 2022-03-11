@@ -1,7 +1,7 @@
 from core.views import ModelViewSet, OwnerListModelViewSetMixin, SetOwnerModelViewListMixin
 from helpers.swagger import ViewSetTagDecorator
 from users.permisions import IsOwnerPermission
-from .serializers import GoalDetailSerializer, GoalSummarySerializer
+from .serializers import GoalSummarySerializer
 from ..models import Goal as GoalModel
 
 
@@ -20,5 +20,3 @@ class GoalViewSet(
         if self.action == 'retrieve':
             queryset = queryset.prefetch_related('core_values')
         return queryset
-
-

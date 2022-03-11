@@ -3,15 +3,24 @@ from core.seralizers import ChoiceField, MultipleChoiceField
 from .models import Task as TaskModel, \
     PartiallyCompletedTask as PartiallyCompletedTaskModel, \
     RepeatTypeChoices, EndTypeChoices, WeekDaysChoices
+from rest_framework import serializers
 
 
 class TaskSummarySerializer(AbstractSummarySerializer):
+    goal = serializers.StringRelatedField()
+    start_date_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+    repeat_type = ChoiceField(choices=RepeatTypeChoices.choices, )
+
     class Meta:
         model = TaskModel
         fields = [
             'title',
             'description',
             'owner',
+            'goal',
+            'start_date_time',
+            'completely_done',
+            'repeat_type',
             *AbstractSummarySerializer.Meta.fields
         ]
         read_only_fields = [
@@ -21,23 +30,22 @@ class TaskSummarySerializer(AbstractSummarySerializer):
 
 
 class TaskDetailSerializer(TaskSummarySerializer, AbstractDetailSerializer):
-    repeat_type = ChoiceField(choices=RepeatTypeChoices.choices, )
     end_type = ChoiceField(choices=EndTypeChoices.choices)
     selected_week_days = MultipleChoiceField(choices=WeekDaysChoices.choices, )
+    repeat_type = ChoiceField(choices=RepeatTypeChoices.choices, )
+    start_date_time = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S")
+    goal = None
 
     class Meta:
         model = TaskModel
         fields = [
             *TaskSummarySerializer.Meta.fields,
-            'goal',
-            'start_date_time',
-            'repeat_type',
             'repeat_period',
             'selected_week_days',
             'end_type',
             'end_date',
             'end_after_occurrence',
-            'completely_done',
+
             *AbstractDetailSerializer.Meta.fields,
         ]
         read_only_fields = [
