@@ -21,6 +21,7 @@ class TaskSummarySerializer(AbstractSummarySerializer):
             'start_date_time',
             'completely_done',
             'repeat_type',
+
             *AbstractSummarySerializer.Meta.fields
         ]
         read_only_fields = [
@@ -35,6 +36,7 @@ class TaskDetailSerializer(TaskSummarySerializer, AbstractDetailSerializer):
     repeat_type = ChoiceField(choices=RepeatTypeChoices.choices, )
     start_date_time = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S")
     goal = None
+    goal_title = serializers.StringRelatedField(source="goal")
 
     class Meta:
         model = TaskModel
@@ -45,7 +47,7 @@ class TaskDetailSerializer(TaskSummarySerializer, AbstractDetailSerializer):
             'end_type',
             'end_date',
             'end_after_occurrence',
-
+            'goal_title',
             *AbstractDetailSerializer.Meta.fields,
         ]
         read_only_fields = [
