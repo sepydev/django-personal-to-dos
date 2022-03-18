@@ -40,7 +40,7 @@ class TodoAPIView(ListModelMixin, OwnerListModelViewSetMixin, GenericViewSet):
                 done_today=Exists(
                     PartiallyCompletedTaskModel.objects.filter(task_id=OuterRef('pk'), create_date=_date.date())),
             )
-
+            _start_condition = Q(start_date_time__date__lte=_date)
             _expire_conditions = (
                     Q(end_type=EndTypeChoices.NEVER) |
                     Q(end_type=EndTypeChoices.DATE, end_date__gte=_date) |
@@ -76,6 +76,7 @@ class TodoAPIView(ListModelMixin, OwnerListModelViewSetMixin, GenericViewSet):
             )
 
             _queryset = _queryset.filter(
+                _start_condition &
                 _expire_conditions &
                 _not_done_condition &
                 (

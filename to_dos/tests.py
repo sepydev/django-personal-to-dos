@@ -90,10 +90,34 @@ class TestExpireAndDoneTasks(PrepareTaskTestMixin, APITestCase):
 
         self.assertNotContains(response, "task completely done", status_code=status.HTTP_200_OK)
 
+    def test_not_started_task(self):
+        create_task(self.client, self.token, self.goal_id,
+                    title="task not started",
+                    start_date_time=add_days(datetime.date.today(), 20),
+                    repeat_type="Day",
+                    repeat_period=1,
+                    end_type="On specific date",
+                    end_date=datetime.date.today() + datetime.timedelta(days=101),
+                    completely_done=False
+                    )
+
+        response = self.client.get(
+            '/personal-to-dos/to-do-list/',
+            {
+                'date': datetime.date.today()
+            },
+            headers={
+                'Authorization': self.token
+            }
+        )
+
+        self.assertNotContains(response, "task not started", status_code=status.HTTP_200_OK)
+
+
     def test_partially_done_task(self):
         task_response = create_task(self.client, self.token, self.goal_id,
                                     title="task done",
-                                    start_date_time=add_days(datetime.date.today(), 20),
+                                    start_date_time=add_days(datetime.date.today(), -20),
                                     repeat_type="Day",
                                     repeat_period=1,
                                     end_type="After specific occurrence",
